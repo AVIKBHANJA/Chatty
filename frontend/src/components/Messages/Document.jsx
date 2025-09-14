@@ -16,53 +16,79 @@ export default function Document({
     link.download = documentFile.name || "documentFile";
     link.click();
   };
+
   return incoming ? (
-    <div className="max-w-125 w-fit">
-      <p className="mb-2.5 text-sm font-medium capitalize">{author}</p>
-      <div className="mb-2.5 rounded-2xl rounded-tl-none bg-gray px-5 py-3 dark:bg-boxdark-2 space-y-2">
-        <div className="flex flex-row items-center justify-between p-2 bg-gray-3 rounded-md dark:bg-boxdark">
-          <div className="flex flex-row items-center space-x-3">
-            <div className="p-2 rounded-md bg-primary/80 text-white">
-              <File size={20} />
-            </div>
-            <div className="flex flex-col">
-              <div>{truncateString(documentFile?.name)}</div>
-              <div className="text-sm font-medium">{documentFile?.size}MB</div>
-            </div>
-          </div>
-
-          <button onClick={handleDownloadClick} className="pl-5">
-            <DownloadSimple />
-          </button>
+    <div className="flex items-start space-x-2 max-w-[80%]">
+      <div className="flex-shrink-0">
+        <div className="w-8 h-8 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-xs font-semibold">
+          {author?.charAt(0)?.toUpperCase()}
         </div>
-
-        <p>{content}</p>
       </div>
-      <p className="text-xs">{timestamp}</p>
+      <div className="flex-1 min-w-0">
+        <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1 capitalize">
+          {author}
+        </p>
+        <div className="inline-block rounded-2xl rounded-tl-md bg-gray-100 dark:bg-gray-700 px-3 py-2 space-y-2">
+          <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-600 rounded-lg">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 rounded-lg bg-blue-500 text-white">
+                <File size={16} />
+              </div>
+              <div className="min-w-0">
+                <div className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                  {truncateString(documentFile?.name)}
+                </div>
+                <div className="text-xs text-gray-500 dark:text-gray-400">
+                  {documentFile?.size}MB
+                </div>
+              </div>
+            </div>
+            <button
+              onClick={handleDownloadClick}
+              className="p-1 text-gray-500 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400"
+            >
+              <DownloadSimple size={16} />
+            </button>
+          </div>
+          {content && (
+            <p className="text-gray-900 dark:text-white text-sm">{content}</p>
+          )}
+        </div>
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+          {timestamp}
+        </p>
+      </div>
     </div>
   ) : (
-    <div className="max-w-125 w-fit ml-auto">
-      <div className="mb-2.5 rounded-2xl rounded-br-none bg-primary px-5 py-3 text-white space-y-2">
-        <div className="flex flex-row items-center justify-between p-2 bg-white rounded-md text-primary">
-          <div className="flex flex-row items-center space-x-3">
-            <div className="p-2 rounded-md bg-primary/20 text-primary">
-              <File size={20} />
+    <div className="flex items-start justify-end space-x-2 max-w-[80%] ml-auto">
+      <div className="flex-1 min-w-0 flex flex-col items-end">
+        <div className="inline-block rounded-2xl rounded-tr-md bg-blue-500 px-3 py-2 space-y-2">
+          <div className="flex items-center justify-between p-3 bg-white/10 rounded-lg">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 rounded-lg bg-white/20 text-white">
+                <File size={16} />
+              </div>
+              <div className="min-w-0">
+                <div className="text-sm font-medium text-white truncate">
+                  {truncateString(documentFile?.name)}
+                </div>
+                <div className="text-xs text-white/80">
+                  {documentFile?.size}MB
+                </div>
+              </div>
             </div>
-            <div className="flex flex-col">
-              <div>{truncateString(documentFile?.name)}</div>
-              <div className="text-sm font-medium">{documentFile?.size}MB</div>
-            </div>
+            <button
+              onClick={handleDownloadClick}
+              className="p-1 text-white/80 hover:text-white"
+            >
+              <DownloadSimple size={16} />
+            </button>
           </div>
-
-          <button onClick={handleDownloadClick} className="pl-5">
-            <DownloadSimple />
-          </button>
+          {content && <p className="text-white text-sm">{content}</p>}
         </div>
-
-        <p>{content}</p>
-      </div>
-      <div className="flex flex-row items-center justify-end space-x-2">
-        <p className="text-xs text-right">{timestamp}</p>
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+          {timestamp}
+        </p>
       </div>
     </div>
   );

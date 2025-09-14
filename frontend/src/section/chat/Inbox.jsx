@@ -30,12 +30,12 @@ import {
 } from "../../socket/socketConnection";
 import { format } from "date-fns";
 import dateFormat, { masks } from "dateformat";
-// import VideoRoom from "../../components/VideoRoom";
-// import AudioRoom from "../../components/AudioRoom";
+import VideoRoom from "../../components/VideoRoom";
+import AudioRoom from "../../components/AudioRoom";
 
 export default function Inbox() {
   const dispatch = useDispatch();
-  const [userInfoOpen, setUserInfoOpen] = useState(true);
+  const [userInfoOpen, setUserInfoOpen] = useState(false);
 
   const containerRef = useRef(null);
 
@@ -256,42 +256,46 @@ export default function Inbox() {
   return (
     <>
       {currentConversation ? (
-        <div
-          className={`flex h-full flex-col border-l border-stroke dark:border-strokedark w-full ${
-            userInfoOpen ? "xl:w-1/2" : "xl:w-3/4"
-          } `}
-        >
+        <div className="flex h-full flex-col bg-white dark:bg-gray-900 flex-1">
           {/* Chat header */}
-          <div className="sticky flex items-center flex-row justify-between border-b border-stroke dark:border-strokedark px-6 py-4.5">
-            <div className="flex items-center" onClick={handleToggleUserInfo}>
-              <div className="mr-4.5 h-13 w-full max-w-13 overflow-hidden rounded-full">
+          <div className="flex items-center justify-between px-6 py-4 bg-white dark:bg-gray-800 shadow-sm">
+            <div
+              className="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg p-2 -m-2 transition-colors"
+              onClick={handleToggleUserInfo}
+            >
+              <div className="relative">
                 {this_user?.avatar ? (
                   <img
                     src={this_user?.avatar}
                     alt="avatar"
-                    className="h-13 w-13 rounded-full object-cover object-center"
+                    className="h-10 w-10 rounded-full object-cover"
                   />
                 ) : (
-                  <div
-                    className={`h-11 w-11 rounded-full border border-stroke dark:border-strokedark bg-gray dark:bg-boxdark flex items-center justify-center text-body dark:text-white capitalize`}
-                  >
+                  <div className="h-10 w-10 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-gray-700 dark:text-gray-300 font-semibold">
                     {this_user?.name.charAt(0)}
                   </div>
                 )}
+                <div
+                  className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white dark:border-gray-800 ${
+                    this_user?.status === "Online"
+                      ? "bg-green-500"
+                      : "bg-gray-400"
+                  }`}
+                />
               </div>
 
-              <div>
-                <h5 className="font-medium text-black dark:text-white text-nowrap">
+              <div className="min-w-0">
+                <h5 className="font-semibold text-gray-900 dark:text-white truncate">
                   {this_user?.name}
                 </h5>
                 {typing?.conversationId && typing?.typing ? (
-                  <p className={`text-sm`}>Typing...</p>
+                  <p className="text-sm text-blue-500">Typing...</p>
                 ) : (
                   <div
-                    className={`text-sm font-medium ${
+                    className={`text-sm ${
                       this_user?.status === "Online"
                         ? "text-green-500"
-                        : "text-red"
+                        : "text-gray-500"
                     }`}
                   >
                     {this_user?.status}
@@ -299,13 +303,46 @@ export default function Inbox() {
                 )}
               </div>
             </div>
+
+            {/* Action buttons */}
+            <div className="flex items-center space-x-2">
+              <button className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                  />
+                </svg>
+              </button>
+              <button className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+                  />
+                </svg>
+              </button>
+            </div>
           </div>
 
-          {/* list of messages */}
-
+          {/* Messages container */}
           <div
             ref={containerRef}
-            className="max-h-full space-y-3.5 overflow-y-auto no-scrollbar px-6 py-7.5 grow"
+            className="flex-1 overflow-y-auto px-6 py-4 space-y-4 bg-gray-50 dark:bg-gray-900"
           >
             {MSG_LIST.map((message, index) => {
               const isNewDay =
@@ -321,7 +358,7 @@ export default function Inbox() {
                       case "Text":
                         return (
                           <TextMessage
-                            author={message.author}
+                            author={message.authorName}
                             content={message.content}
                             incoming={message.incoming}
                             timestamp={message.timestamp}
@@ -331,7 +368,7 @@ export default function Inbox() {
                       case "Giphy":
                         return (
                           <GiphyMessage
-                            author={message.author}
+                            author={message.authorName}
                             content={message.content}
                             incoming={message.incoming}
                             timestamp={message.timestamp}
@@ -342,7 +379,7 @@ export default function Inbox() {
                       case "Document":
                         return (
                           <DocumentMessage
-                            author={message.author}
+                            author={message.authorName}
                             content={message.content}
                             incoming={message.incoming}
                             timestamp={message.timestamp}
@@ -353,7 +390,7 @@ export default function Inbox() {
                       case "Audio":
                         return (
                           <VoiceMessage
-                            author={message.author}
+                            author={message.authorName}
                             content={message.content}
                             incoming={message.incoming}
                             timestamp={message.timestamp}
@@ -362,11 +399,10 @@ export default function Inbox() {
                           />
                         );
                       case "Media":
-                        console.log(message, "This is media msg");
                         return (
                           <MediaMessage
                             incoming={message.incoming}
-                            author={message.author}
+                            author={message.authorName}
                             timestamp={message.timestamp}
                             media={message.media}
                             caption={message.content}
@@ -384,57 +420,51 @@ export default function Inbox() {
             {typing?.conversationId && typing?.typing && <TypingIndicator />}
           </div>
 
-          {/* Input  */}
-
-          <div className="sticky bottom-0 border-t border-stroke bg-white px-6 py-5 dark:border-strokedark dark:bg-boxdark">
-            <div className="flex items-center justify-between space-x-4.5">
-              <div className="relative w-full">
+          {/* Input Area */}
+          <div className="px-6 py-4 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+            <div className="flex items-end space-x-3">
+              <div className="flex-1 relative">
                 <input
                   onKeyDown={(e) => {
                     if (e.key === "Enter") handleSendMsg(e);
                   }}
-                  type=""
+                  type="text"
                   value={inputValue}
                   onChange={handleInputChange}
-                  placeholder="Send Message..."
-                  className="h-13 w-full rounded-md border border-stroke bg-gray pl-5 pr-19 text-black placeholder-body outline-none focus:border-primary
-                dark:border-strokedark dark:bg-boxdark-2 dark:text-white"
+                  placeholder="Type a message..."
+                  className="w-full rounded-full border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 px-4 py-3 pr-20 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
                 />
 
-                <div className="absolute right-5 top-1/2 -translate-y-1/2 items-center justify-end space-x-4">
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center space-x-2">
                   <button
                     onClick={handleMicClick}
-                    className="hover:text-primary"
+                    className="p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
                   >
-                    <Microphone size={20} />
+                    <Microphone size={16} />
                   </button>
-                  <button className="hover:text-primary">
+                  <button className="p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
                     <Attachment />
                   </button>
-                  <button onClick={handleToggleGif}>
-                    <Gif size={20} />
-                  </button>
                   <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                    }}
-                    className="hover:text-primary"
+                    onClick={handleToggleGif}
+                    className="p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
                   >
-                    <EmojiPicker onSelectEmoji={handleEmojiSelect} />
+                    <Gif size={16} />
                   </button>
+                  <EmojiPicker onSelectEmoji={handleEmojiSelect} />
                 </div>
               </div>
 
               <button
                 onClick={handleSendMsg}
                 disabled={!inputValue}
-                className={`flex items-center justify-center h-13 max-w-13 w-full rounded-md  hover:bg-opacity-90 ${
-                  !inputValue
-                    ? "bg-gray text-body dark:bg-boxdark-2 dark:text-body"
-                    : "bg-primary text-white"
+                className={`p-3 rounded-full transition-colors ${
+                  inputValue
+                    ? "bg-blue-500 hover:bg-blue-600 text-white"
+                    : "bg-gray-200 dark:bg-gray-700 text-gray-400 cursor-not-allowed"
                 }`}
               >
-                <PaperPlaneTilt size={24} weight="bold" />
+                <PaperPlaneTilt size={20} weight="bold" />
               </button>
             </div>
 
@@ -442,14 +472,18 @@ export default function Inbox() {
           </div>
         </div>
       ) : (
-        <div className="flex flex-row items-center justify-center w-full xl:w-3/4 border-l border-stroke dark:border-strokedark">
-          <div className="flex flex-col space-y-4 items-center justify-center">
-            {/* Illustration */}
-            <ChatTeardropSlash size={100} />
-            {/* Text */}
-            <span className="text-lg font-semibold">
+        <div className="flex-1 flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+          <div className="text-center">
+            <ChatTeardropSlash
+              size={80}
+              className="mx-auto text-gray-400 mb-4"
+            />
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
               No Conversation Selected
-            </span>
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400">
+              Choose a conversation from the sidebar to start messaging
+            </p>
           </div>
         </div>
       )}
@@ -462,13 +496,23 @@ export default function Inbox() {
         <AudioRoom open={audioCall} handleClose={handleToggleAudio} />
       )}
 
+      {/* UserInfo as overlay/slide-in panel */}
       {currentConversation && userInfoOpen && (
-        <div className="xl:w-1/4">
-          <UserInfo
-            user={this_user}
-            handleToggleUserInfo={handleToggleUserInfo}
+        <>
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 z-40"
+            onClick={handleToggleUserInfo}
           />
-        </div>
+
+          {/* UserInfo Panel */}
+          <div className="fixed right-0 top-0 h-full w-80 bg-white dark:bg-gray-800 shadow-2xl z-50 transform transition-transform duration-300 ease-in-out">
+            <UserInfo
+              user={this_user}
+              handleToggleUserInfo={handleToggleUserInfo}
+            />
+          </div>
+        </>
       )}
     </>
   );

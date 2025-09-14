@@ -2,23 +2,37 @@ import React from "react";
 
 export default function Giphy({ incoming, author, timestamp, content, giphy }) {
   return incoming ? (
-    <div className="max-w-100 w-fit">
-      <p className="mb-2.5 text-sm font-medium">{author}</p>
-      <div className="mb-2.5 rounded-2xl rounded-tl-none bg-gray px-5 py-3 dark:bg-boxdark-2 space-y-2">
-        <img src={giphy} className="w-full mt-3" />
-        <p>{content}</p>
+    <div className="flex items-start space-x-2 max-w-[80%]">
+      <div className="flex-shrink-0">
+        <div className="w-8 h-8 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-xs font-semibold">
+          {author?.charAt(0)?.toUpperCase()}
+        </div>
       </div>
-      <p className="text-xs">{timestamp}</p>
+      <div className="flex-1 min-w-0">
+        <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+          {author}
+        </p>
+        <div className="inline-block rounded-2xl rounded-tl-md bg-gray-100 dark:bg-gray-700 px-3 py-2 space-y-2">
+          <img src={giphy} className="w-full rounded-lg max-w-xs" alt="GIF" />
+          {content && (
+            <p className="text-gray-900 dark:text-white text-sm">{content}</p>
+          )}
+        </div>
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+          {timestamp}
+        </p>
+      </div>
     </div>
   ) : (
-    <div className="max-w-100 ml-auto w-fit">
-      <div className="mb-2.5 rounded-2xl rounded-br-none bg-primary px-5 py-3 space-y-2">
-        <img src={giphy} className="w-full mt-3" />
-        <p className="text-white">{content}</p>
-      </div>
-
-      <div className="flex flex-row items-center justify-end space-x-2">
-        <p className="text-xs">{timestamp}</p>
+    <div className="flex items-start justify-end space-x-2 max-w-[80%] ml-auto">
+      <div className="flex-1 min-w-0 flex flex-col items-end">
+        <div className="inline-block rounded-2xl rounded-tr-md bg-blue-500 px-3 py-2 space-y-2">
+          <img src={giphy} className="w-full rounded-lg max-w-xs" alt="GIF" />
+          {content && <p className="text-white text-sm">{content}</p>}
+        </div>
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+          {timestamp}
+        </p>
       </div>
     </div>
   );
